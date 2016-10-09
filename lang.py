@@ -175,6 +175,25 @@ def count_words_not_training_data(dictionary):
     print float(length_of_dictionary/length_of_word_summary) * 100
     return word_count
 
+def count_bigrams_not_training_data(dictionary):
+    word_count = 0
+    total = 0
+    for k,v in word_summary.items():
+        if k not in dictionary:
+            dictionary[k] = 1
+            word_count += 1
+        total += v
+    print "This is the percentage of words that were not in the training data "
+    print (float(word_count)/total) * 100
+    length_of_dictionary = len(dictionary)
+    print "this is the length_of_dic"
+    print length_of_dictionary
+    length_of_word_summary = len(word_summary)
+    print "this is the length of word_summary "
+    print length_of_word_summary
+    print "This is the percentage of word types that were not in the training data "
+    print float(length_of_dictionary/length_of_word_summary) * 100
+
 add_tags('brown-train.txt','brown-train-with-tags')
 add_tags('brown-test.txt', 'brown-test-with-tags')
 add_tags('learner-test.txt', 'learner-test-with-tags')
