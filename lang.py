@@ -5,6 +5,8 @@
 word_summary = {}
 bigram_dictionary = {}
 dictionary_with_add_tags = {}
+brown_test_diction = {}
+learner_test_diction = {}
 count = 0
 count_of_two_words = 0
 
@@ -14,6 +16,7 @@ def get_count_of_single_word(str,input_file):
     for word in open_file.read().split():
         if word == str:
             word_count += 1
+    open_file.close()
     return word_count
 
 def add_tags(input_file, output_file):
@@ -67,6 +70,30 @@ def build_bigram(input_file):
         print bigram_model
     open_file.close()
 
+def build_bigram_with_smoothing(input_file):
+    bigram_model = 1.0
+    open_file = open(input_file)
+    for a_line in open_file:
+        words_in_line = a_line.split()
+        size_of_line = len(words_in_line) - 1
+        countr = 0
+        indx = 1
+        prev_indx = 0
+        while countr < size_of_line:
+            word_A = words_in_line[prev_indx]
+            word_B = words_in_line[indx]
+            full_word = word_A + word_B
+            if full_word not in bigram_dictionary:
+                #not sure what to do here
+                bigram_model = 1.0
+            else:
+                count_of_numtr = bigram_dictionary[full_word]
+                count_of_denomtr = word_summary[word_A]
+                bigram_model *= float(count_of_numtr)/count_of_denomtr
+        print "bigram probability "
+        print bigram_model
+    open_file.close()
+
 def print_dictionary(dictionary):
     for k, v in dictionary.items():
         print k,v
@@ -94,6 +121,24 @@ def create_dictionary(input_file, input_dictionary):
             count_words += 1
     retrieve_word_count.close()
 
+def count_tokens_in_file(input_file):
+    num_of_tokens = 0
+    inc = 0
+    a_line = open(input_file)
+    for line in a_line:
+        num_of_tokens += len(line)
+        num_of_words = line.split()
+        length_of_array = len(num_of_words) - 1
+    return num_of_tokens
+
+def count_words_not_training_data(dictionary):
+    word_count = 0
+    for k,v in word_summary.items():
+        if k not in dictionary:
+            dictionary[k] = 1
+            word_count += 1
+    return word_count
+
 add_tags('brown-train.txt','brown-train-with-tags')
 add_tags('brown-test.txt', 'brown-test-with-tags')
 add_tags('learner-test.txt', 'learner-test-with-tags')
@@ -120,14 +165,6 @@ for line in read_file_for_bigram:
         previous_index += 1
 read_file_for_bigram.close()
 
-
-print "======================================"
-print "this is count"
-print count
-print "======================================"
-
-print_dictionary(bigram_dictionary)
-
 read_file = open('brown-train-with-tags','r')
 replace_single_words = open('final_training_data','w')
 for word in read_file.read().split():
@@ -145,6 +182,22 @@ replace_single_words.close()
 #value of unknown words
 value_of_unknown = get_count_of_single_word('<unk>','final_training_data')
 
-#build_unigram('final_training_data')
+#create a dictionary from the file with all the tags added
+create_dictionary('brown-train-with-tags', dictionary_with_add_tags)
 
+unique_words = count_words_in_dictionary(dictionary_with_add_tags)
+print "this is the amount of unique words in the corpus "
+print unique_words
 
+#get the count of the tokens in training data including the tags
+count = count_tokens_in_file('final_training_data')
+print "this is the number of tokens in the training corpus "
+print count
+
+#create a dictionary from the data in brown-test-with-tags and learner-test-with-tags
+create_dictionary('brown-test-with-tags', brown_test_diction)
+create_dictionary('learner-test-with-tags', learner_test_diction)
+
+words_in_brown_test = count_words_not_training_data(brown_test_diction)
+words_in_learner_test = count_words_in_dictionary(learner_test_diction)
+print_dictionary(brown_test_diction)
