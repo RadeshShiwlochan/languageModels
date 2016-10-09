@@ -98,23 +98,23 @@ def build_bigram_with_smoothing(input_file, unk_count, total_words, vocab_size):
             if full_word in bigram_dictionary:
                 count_of_numtr = bigram_dictionary[full_word]
                 count_of_denomtr = word_summary[word_A]
-                bigram_model *= float((count_of_numtr) + 1) / (count_of_denomtr + vocab_size)
+                bigram_model *= (float(count_of_numtr) + 1) / (count_of_denomtr + vocab_size)
                 print "bigram probability "
                 print bigram_model
 
             elif word_A + "<unk>" in bigram_dictionary:
                 access_word = word_A + "<unk>"
                 the_count = bigram_dictionary[access_word]
-                bigram_model *= float((the_count) + 1) / (unk_count + vocab_size)
+                bigram_model *= (float(the_count) + 1) / (unk_count + vocab_size)
 
             elif "<unk> + word_B" in bigram_dictionary:
                 access_word = "<unk> + word_B"
                 the_count = bigram_dictionary[access_word]
-                bigram_model *= float((the_count) + 1) / (word_summary[word_B] + vocab_size)
+                bigram_model *= (float(the_count) + 1) / (word_summary[word_B] + vocab_size)
             else:
                 access_word = "<unk>" + "<unk>"
                 the_count = bigram_dictionary[access_word]
-                bigram_model *= float((the_count) + 1 )/ (unk_count + vocab_size)
+                bigram_model *= (float(the_count) + 1 )/ (unk_count + vocab_size)
 
     open_file.close()
 
@@ -201,10 +201,6 @@ def count_bigrams_not_training_data(input_file):
     unique_words_in_file = count_words_in_dictionary(dictionary)
     print "This is the percentage of word tokens that were not in the training data for bigram"
     print (float(two_word_count)/total) * 100
-    print "this is the length_of_dic"
-    print unique_words_in_file
-    print "this is the total "
-    print total
     print "This is the percentage of word types that were not in the training data for bigram"
     print (float(unique_words_in_file)/total) * 100
 
@@ -272,3 +268,4 @@ words_in_learner_test = count_words_not_training_data(learner_test_diction)
 #print_dictionary(brown_test_diction)
 
 count_bigrams_not_training_data('brown-test-with-tags')
+count_bigrams_not_training_data('learner-test-with-tags')
