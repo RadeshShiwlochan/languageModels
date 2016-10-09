@@ -115,8 +115,60 @@ def build_bigram_with_smoothing(input_file, unk_count, total_words, vocab_size):
                 access_word = "<unk>" + "<unk>"
                 the_count = bigram_dictionary[access_word]
                 bigram_model *= (float(the_count) + 1 )/ (unk_count + vocab_size)
-
     open_file.close()
+
+def unigram_of_string(input_str):
+    new_str = '<s> ' + input_str + ' </s>'
+    array_of_words = new_str.split()
+    length = len(array_of_words) - 1
+    counter = 0
+    index = 1
+    unigram = 1
+    total = count_words_in_dictionary(word_summary)
+    while counter < length:
+        word = array_of_words[index]
+        print "this is the word --> " + word
+        count_of_word = word_summary[word]
+        print "this is count of that word "
+        print count_of_word
+        unigram *= float(count_of_word)/total
+        counter += 1
+        index += 1
+    print "This is unigram "
+    print unigram
+
+def bigram_of_string(input_str,unk_count, vocab_size):
+    bigram_model = 1
+    new_str = "<s> " + input_str + " </s>"
+    words_in_line = new_str.split()
+    size_of_line = len(array_of_words) - 1
+    countr = 0
+    indx = 1
+    prev_indx = 0
+    while countr < size_of_line:
+        word_A = words_in_line[prev_indx]
+        word_B = words_in_line[indx]
+        full_word = word_A + word_B
+        if full_word in bigram_dictionary:
+            count_of_numtr = bigram_dictionary[full_word]
+            count_of_denomtr = word_summary[word_A]
+            bigram_model *= (float(count_of_numtr) + 1) / (count_of_denomtr + vocab_size)
+            print "bigram probability "
+            print bigram_model
+
+        elif word_A + "<unk>" in bigram_dictionary:
+            access_word = word_A + "<unk>"
+            the_count = bigram_dictionary[access_word]
+            bigram_model *= (float(the_count) + 1) / (unk_count + vocab_size)
+
+        elif "<unk> + word_B" in bigram_dictionary:
+            access_word = "<unk> + word_B"
+            the_count = bigram_dictionary[access_word]
+            bigram_model *= (float(the_count) + 1) / (word_summary[word_B] + vocab_size)
+        else:
+            access_word = "<unk>" + "<unk>"
+            the_count = bigram_dictionary[access_word]
+            bigram_model *= (float(the_count) + 1) / (unk_count + vocab_size)
 
 def print_dictionary(dictionary):
     for k, v in dictionary.items():
@@ -260,12 +312,16 @@ print "this is the number of tokens in the training corpus "
 print count
 
 #create a dictionary from the data in brown-test-with-tags and learner-test-with-tags
-create_dictionary('brown-test-with-tags', brown_test_diction)
-create_dictionary('learner-test-with-tags', learner_test_diction)
+#create_dictionary('brown-test-with-tags', brown_test_diction)
+#create_dictionary('learner-test-with-tags', learner_test_diction)
 
-words_in_brown_test = count_words_not_training_data(brown_test_diction)
-words_in_learner_test = count_words_not_training_data(learner_test_diction)
+#words_in_brown_test = count_words_not_training_data(brown_test_diction)
+#words_in_learner_test = count_words_not_training_data(learner_test_diction)
 #print_dictionary(brown_test_diction)
 
-count_bigrams_not_training_data('brown-test-with-tags')
-count_bigrams_not_training_data('learner-test-with-tags')
+#count_bigrams_not_training_data('brown-test-with-tags')
+#count_bigrams_not_training_data('learner-test-with-tags')
+
+unigram_of_string("he was laughed off the screen .")
+unigram_of_string("there was no compulsion behind them .")
+unigram_of_string("i look forward to hearing your reply .")
