@@ -95,15 +95,27 @@ def build_bigram_with_smoothing(input_file, unk_count, total_words, vocab_size):
             word_A = words_in_line[prev_indx]
             word_B = words_in_line[indx]
             full_word = word_A + word_B
-            if full_word not in bigram_dictionary:
-                #not sure what to do here
-                bigram_model = 1.0
-            else:
+            if full_word in bigram_dictionary:
                 count_of_numtr = bigram_dictionary[full_word]
                 count_of_denomtr = word_summary[word_A]
-                bigram_model *= float((count_of_numtr) + 1) /(count_of_denomtr + vocab_size)
-        print "bigram probability "
-        print bigram_model
+                bigram_model *= float((count_of_numtr) + 1) / (count_of_denomtr + vocab_size)
+                print "bigram probability "
+                print bigram_model
+
+            elif word_A + "<unk>" in bigram_dictionary:
+                access_word = word_A + "<unk>"
+                the_count = bigram_dictionary[access_word]
+                bigram_model *= float((the_count) + 1) / (unk_count + vocab_size)
+
+            elif "<unk> + word_B" in bigram_dictionary:
+                access_word = "<unk> + word_B"
+                the_count = bigram_dictionary[access_word]
+                bigram_model *= float((the_count) + 1) / (word_summary[word_B] + vocab_size)
+            else:
+                access_word = "<unk>" + "<unk>"
+                the_count = bigram_dictionary[access_word]
+                bigram_model *= float((the_count) + 1 )/ (unk_count + vocab_size)
+
     open_file.close()
 
 def print_dictionary(dictionary):
