@@ -164,7 +164,15 @@ def count_words_not_training_data(dictionary):
             word_count += 1
         total += v
     print "This is the percentage of words that were not in the training data "
-    print float((word_count)/total) * 100
+    print (float(word_count)/total) * 100
+    length_of_dictionary = len(dictionary)
+    print "this is the length_of_dic"
+    print length_of_dictionary
+    length_of_word_summary = len(word_summary)
+    print "this is the length of word_summary "
+    print length_of_word_summary
+    print "This is the percentage of word types that were not in the training data "
+    print float(length_of_dictionary/length_of_word_summary) * 100
     return word_count
 
 add_tags('brown-train.txt','brown-train-with-tags')
@@ -227,5 +235,5 @@ create_dictionary('brown-test-with-tags', brown_test_diction)
 create_dictionary('learner-test-with-tags', learner_test_diction)
 
 words_in_brown_test = count_words_not_training_data(brown_test_diction)
-words_in_learner_test = count_words_in_dictionary(learner_test_diction)
+words_in_learner_test = count_words_not_training_data(learner_test_diction)
 #print_dictionary(brown_test_diction)
