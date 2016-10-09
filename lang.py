@@ -183,6 +183,8 @@ def count_bigrams_not_training_data(dictionary):
             dictionary[k] = 1
             word_count += 1
         total += v
+
+        
     print "This is the percentage of words that were not in the training data "
     print (float(word_count)/total) * 100
     length_of_dictionary = len(dictionary)
