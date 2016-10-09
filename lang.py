@@ -157,10 +157,14 @@ def count_tokens_in_file(input_file):
 
 def count_words_not_training_data(dictionary):
     word_count = 0
+    total = 0
     for k,v in word_summary.items():
         if k not in dictionary:
             dictionary[k] = 1
             word_count += 1
+        total += v
+    print "This is the percentage of words that were not in the training data "
+    print float((word_count)/total) * 100
     return word_count
 
 add_tags('brown-train.txt','brown-train-with-tags')
@@ -224,4 +228,4 @@ create_dictionary('learner-test-with-tags', learner_test_diction)
 
 words_in_brown_test = count_words_not_training_data(brown_test_diction)
 words_in_learner_test = count_words_in_dictionary(learner_test_diction)
-print_dictionary(brown_test_diction)
+#print_dictionary(brown_test_diction)
