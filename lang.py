@@ -175,26 +175,38 @@ def count_words_not_training_data(dictionary):
     print float(length_of_dictionary/length_of_word_summary) * 100
     return word_count
 
-def count_bigrams_not_training_data(dictionary):
-    word_count = 0
-    total = 0
-    for k,v in word_summary.items():
-        if k not in dictionary:
-            dictionary[k] = 1
-            word_count += 1
-        total += v
-
-        
-    print "This is the percentage of words that were not in the training data "
-    print (float(word_count)/total) * 100
-    length_of_dictionary = len(dictionary)
+def count_bigrams_not_training_data(input_file):
+    dictionary = {}
+    two_word_count = 0
+    read_file_for_bigram = open(input_file)
+    for line in read_file_for_bigram:
+        array_of_words = line.split()
+        array_length = len(array_of_words) - 1
+        counter = 0
+        index = 1
+        previous_index = index - 1
+        while (counter < array_length):
+            two_words = array_of_words[previous_index] + " " + array_of_words[index]
+            if two_words not in bigram_dictionary:
+                dictionary[two_words] = 1
+                two_word_count += 1
+            elif two_words in dictionary and two_words not in bigram_dictionary:
+                dictionary[two_words] += 1
+                two_word_count += 1
+            counter += 1
+            index += 1
+            previous_index += 1
+    read_file_for_bigram.close()
+    total = count_tokens_in_file(input_file)
+    unique_words_in_file = count_words_in_dictionary(dictionary)
+    print "This is the percentage of word tokens that were not in the training data for bigram"
+    print (float(two_word_count)/total) * 100
     print "this is the length_of_dic"
-    print length_of_dictionary
-    length_of_word_summary = len(word_summary)
-    print "this is the length of word_summary "
-    print length_of_word_summary
-    print "This is the percentage of word types that were not in the training data "
-    print float(length_of_dictionary/length_of_word_summary) * 100
+    print unique_words_in_file
+    print "this is the total "
+    print total
+    print "This is the percentage of word types that were not in the training data for bigram"
+    print (float(unique_words_in_file)/total) * 100
 
 add_tags('brown-train.txt','brown-train-with-tags')
 add_tags('brown-test.txt', 'brown-test-with-tags')
@@ -258,3 +270,5 @@ create_dictionary('learner-test-with-tags', learner_test_diction)
 words_in_brown_test = count_words_not_training_data(brown_test_diction)
 words_in_learner_test = count_words_not_training_data(learner_test_diction)
 #print_dictionary(brown_test_diction)
+
+count_bigrams_not_training_data('brown-test-with-tags')
