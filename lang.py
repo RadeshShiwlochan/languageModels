@@ -46,7 +46,7 @@ def build_unigram(input_file):
     print unigram_model
     open_file.close()
 
-def build_bigram(input_file):
+def build_bigram(input_file, unk_count, total_words):
     bigram_model = 1.0
     open_file = open(input_file)
     for a_line in open_file:
@@ -59,18 +59,30 @@ def build_bigram(input_file):
             word_A = words_in_line[prev_indx]
             word_B = words_in_line[indx]
             full_word = word_A + word_B
-            if full_word not in bigram_dictionary:
-                #not sure what to do here
-                bigram_model = 1.0
-            else:
+            if full_word in bigram_dictionary:
                 count_of_numtr = bigram_dictionary[full_word]
                 count_of_denomtr = word_summary[word_A]
-                bigram_model *= float(count_of_numtr)/count_of_denomtr
-        print "bigram probability "
-        print bigram_model
+                bigram_model *= float(count_of_numtr) / count_of_denomtr
+                print "bigram probability "
+                print bigram_model
+
+            elif word_A + "<unk>" in bigram_dictionary:
+                access_word = word_A + "<unk>"
+                the_count = bigram_dictionary[access_word]
+                bigram_model *= float(the_count) / unk_count
+
+            elif "<unk> + word_B" in bigram_dictionary:
+                access_word = "<unk> + word_B"
+                the_count = bigram_dictionary[access_word]
+                bigram_model *= float(the_count)/ word_summary[word_B]
+            else:
+                access_word = "<unk>" + "<unk>"
+                the_count = bigram_dictionary[access_word]
+                bigram_model *= float(the_count)/ unk_count
+
     open_file.close()
 
-def build_bigram_with_smoothing(input_file):
+def build_bigram_with_smoothing(input_file, unk_count, total_words, vocab_size):
     bigram_model = 1.0
     open_file = open(input_file)
     for a_line in open_file:
@@ -89,7 +101,7 @@ def build_bigram_with_smoothing(input_file):
             else:
                 count_of_numtr = bigram_dictionary[full_word]
                 count_of_denomtr = word_summary[word_A]
-                bigram_model *= float(count_of_numtr)/count_of_denomtr
+                bigram_model *= float((count_of_numtr) + 1) /(count_of_denomtr + vocab_size)
         print "bigram probability "
         print bigram_model
     open_file.close()
